@@ -12,4 +12,10 @@
 hs_err_pid*
 
 .idea/
+*.iml
 target/
+
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml

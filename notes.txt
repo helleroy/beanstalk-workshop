@@ -1,0 +1,30 @@
+
+
+# installera cli
+brew install awsebcli
+
+# init application og platform
+eb init
+
+# environment med enkel ec2 instans
+eb create test -i t2.nano -k gustav-aws-eb -p java-8 --single
+
+# environment med postgres-database och enkel ec2 instans
+# database=sbdb
+# superuser=superuser
+eb create test -db -db.engine postgres -db.user superuser -db.pass owrjkhsdfuywerjh -db.size 5 -i t2.nano -k gustav-aws-eb -p java-8 --sample --single
+
+
+
+
+# eb deploy packar src med git archive och bygger på ec2 instansen. kan lasta upp färdig artefakt:
+# i .elasticbeanstalk/config.yml
+deploy:
+  artifact: target/beanstalk-workshop-0.0.1-SNAPSHOT.war
+
+
+# deploy
+git add .
+eb deploy --staged
+
+
