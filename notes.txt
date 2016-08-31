@@ -9,10 +9,17 @@ eb init
 # environment med enkel ec2 instans
 eb create test -i t2.nano -k gustav-aws-eb -p java-8 --single
 
+# environment med to ec2 instanser
+# test request draining using
+#    while true; do curl http://localhost:5000/sleep\?seconds=\1 ; echo ;  sleep 1; done
+# request draining 20s per default, se Consols > Configuration > Network Tier
+eb create test -i t2.nano --scale 2 -k gustav-aws-eb -p java-8 
+
+
 # environment med postgres-database och enkel ec2 instans
 # database=sbdb
 # superuser=superuser
-eb create test -db -db.engine postgres -db.user superuser -db.pass owrjkhsdfuywerjh -db.size 5 -i t2.nano -k gustav-aws-eb -p java-8 --sample --single
+eb create test -db -db.engine postgres -db.user superuser -db.pass owrjkhsdfuywerjh -db.size 5 -i t2.nano -k gustav-aws-eb -p java-8 --scale 2 
 
 
 
