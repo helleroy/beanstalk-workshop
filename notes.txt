@@ -1,4 +1,65 @@
 
+Forslag til opplegg
+-------------------
+
+0. Forberedelser
+----------------
+- clona repo
+- bygg
+- amazon credential
+- verifiser amazon oppsett
+
+
+1. Deploy webapp
+----------------
+- create eb environment (single webapp?)
+- eb deploy 
+- make a change
+- deploy 
+- verify
+
+
+2. Autoscaling
+--------------
+- create new environment with load balancer
+- configure autoscaling (2-4?)
+- deploy app
+- öka load, se auto scale in action (eb health etc)
+- nedetidsfri deploy ut av boxen.. 
+
+3. RDS
+------
+- create new environment with database (single for speed?)
+- evt. .ebextensions for å laga schema på förhand (göra ting mot db som inte ger så mkt mening att göra inifrån appen)
+   - yum install postgresql
+   - bruk env. props for RDS i .ebextensions för att targeta databasen  (via psql)
+   - create schema 
+- init datasource i app
+- ex. bruk flyway i app för migrering till sista version av schemat
+
+
+
+Nyttiga ting
+-------------
+- eb health 
+- eb ssh
+- eb logs
+- hur läsa loggar annars?
+
+
+
+
+
+
+
+
+
+
+
+
+====================================================
+# Diverse notater 
+
 
 # installera cli
 brew install awsebcli
@@ -33,5 +94,17 @@ deploy:
 # deploy
 git add .
 eb deploy --staged
+
+
+# database
+# JAVA env:
+#String dbName = System.getenv("RDS_DB_NAME");
+#      String userName = System.getenv("RDS_USERNAME");
+#      String password = System.getenv("RDS_PASSWORD");
+#      String hostname = System.getenv("RDS_HOSTNAME");
+#       String port = System.getenv("RDS_PORT");
+
+
+
 
 
