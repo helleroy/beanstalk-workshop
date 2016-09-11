@@ -12,16 +12,19 @@ public class Endpoint {
 
     @RequestMapping(name = "/ping", path = "/")
     public String ping() {
+        System.out.println("Request: /ping");
         return "pong";
     }
 
     @RequestMapping(name = "/500", path = "/500")
     public String Error() {
+        System.err.println("Request: /500")
         throw new RuntimeException();
     }
 
     @RequestMapping(name = "/hostname", path = "/hostname")
     public String hostname() {
+        System.out.println("Request: /hostname")
         return getHostname();
     }
 
@@ -35,6 +38,7 @@ public class Endpoint {
 
     @RequestMapping(name = "/sleep", path = "/sleep")
     public String sleep(@RequestParam(defaultValue = "10", name = "seconds") int sleepSeconds) {
+        System.out.println("Request: /sleep")
         try {
             Thread.sleep(sleepSeconds * 1000);
         } catch (InterruptedException e) {
