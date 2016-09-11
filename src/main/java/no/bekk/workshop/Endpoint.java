@@ -10,11 +10,15 @@ import java.net.UnknownHostException;
 @RestController
 public class Endpoint {
 
-    @RequestMapping(name = "/ping")
+    @RequestMapping(name = "/ping", path = "/")
     public String ping() {
         return "pong";
     }
 
+    @RequestMapping(name = "/500", path = "/500")
+    public String Error() {
+        throw new RuntimeException();
+    }
 
     @RequestMapping(name = "/hostname", path = "/hostname")
     public String hostname() {
