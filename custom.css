@@ -1,0 +1,9 @@
+.reveal span.question {
+    display: block;
+    font-weight: bold;
+}
+
+.reveal span.answer {
+    display: block;
+    font-weight: normal;
+}

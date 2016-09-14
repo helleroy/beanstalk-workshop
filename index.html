@@ -1,0 +1,139 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+        <title>AWS Beanstalk</title>
+
+        <link rel="stylesheet" href="css/reveal.css">
+        <link rel="stylesheet" href="css/theme/black.css">
+
+        <!-- Theme used for syntax highlighting of code -->
+        <link rel="stylesheet" href="lib/css/zenburn.css">
+
+        <link rel="stylesheet" href="custom.css">
+
+        <!-- Printing and PDF exports -->
+        <script>
+            var link = document.createElement( 'link' );
+            link.rel = 'stylesheet';
+            link.type = 'text/css';
+            link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+            document.getElementsByTagName( 'head' )[0].appendChild( link );
+        </script>
+    </head>
+    <body>
+        <div class="reveal">
+            <div class="slides">
+                <section>
+                    <h1>AWS Elastic Beanstalk</h1>
+                    <ul>
+                        <li class="fragment">Hva er det?</li>
+                        <li class="fragment">Hvorfor bruke det?</li>
+                        <li class="fragment">Workshop: Hvordan bruke det?</li>
+                        <li class="fragment">Spørsmål</li>
+                    </ul>
+                </section>
+                <section>
+                    <h2>Hva er Beanstalk?</h2>
+                    <blockquote>
+                        "By using Elastic Beanstalk, developers can focus on developing their application and are freed from deployment-oriented tasks, such as provisioning servers, setting up load balancing, or managing scaling."
+                    </blockquote>
+                    <aside class="notes">
+                        PaaS - automatisk setup av de "vanlige" tingene.
+                        <ul>
+                            <li>EC2 instances, ELB, RDS, Roles, Keys, (S3 bucket for storing application), Alarms, SNS</li>
+                        </ul>
+                        Help commands (eb logs, eb deploy)
+                    </aside>
+                </section>
+                <section>
+                    <h2>Hvorfor bruke Beanstalk?</h2>
+                    <ul>
+                        <li class="fragment">"Gratis"</li>
+                        <li class="fragment">Enklere</li>
+                        <li class="fragment">Raskere</li>
+                        <li class="fragment">Like customizable</li>
+                    </ul>
+                    <aside class="notes">
+                        <ul>
+                            <li>Gratis: Betaler kun for den underliggende infrastrukturen</li>
+                            <li>Enklere: Sammenlign den kommende workshoppen med det vi gjorde i vår</li>
+                            <li>Raskere: Selv om du kan alt fra før, er dette mindre arbeid. Du kan også bruke eb clone for å duplisere et miljø.</li>
+                            <li>Customizable: Du kan endre komponentene etter oppsett</li>
+                        </ul>
+                    </aside>
+                </section>
+                <section>
+                    <h2>Hvorfor IKKE bruke Beanstalk?</h2>
+                    <ul>
+                        <li class="fragment">OpsWorks bedre alternativ for stor infrastruktur</li>
+                        <li class="fragment">TODO: Bør finne mer årsaker</li>
+                    </ul>
+                    <aside class="notes">
+                        <ul>
+                            <li>AWS OpsWorks gir mer granularitet og kontroll</li>
+                        </ul>
+                    </aside>
+                </section>
+                <section>
+                    <h2>Workshop: Hvordan bruke Beanstalk</h2>
+                    <a href="https://github.com/helleroy/beanstalk-workshop">https://github.com/helleroy/beanstalk-workshop</a>
+                </section>
+
+                <section>
+                    <h2>Spørsmål</h2>
+                    <span class="question">Q: Vil <code>eb deploy</code> gi nedetid?</span>
+                    <span class="answer fragment">A: Ja, den kan det. Kommandoen setter <strong>ikke</strong> opp en ny instans, flytter peker over til denne og tar den gamle ned. Istedenfor endrer <code>deploy</code> miljøet slik det står. Men den  deployer kun én instans av gangen, så det vil ikke merkes godt.</span>
+                    <aside class="notes">
+                        Resultat av dette er at er at man kan oppleve både ny og gammel versjon av nettstedet (med mindre man har sticky sessions)
+                    </aside>
+                </section>
+
+                 <section>
+                    <h2>Spørsmål</h2>
+                    <span class="question">Q: Tar <code>eb deploy</code> mine filer slik de er akkurat nå?</span>
+                    <span class="answer fragment">A: Nei, den tar siste commit.</span>
+                    <aside class="notes">
+                        Du kan også bruke <code>eb deploy --staged</code> for å inkludere det som er i git stage
+                    </aside>
+                </section>
+
+                 <section>
+                    <h2>Spørsmål</h2>
+                    <span class="question">Q: Hvis jeg allerede har en app, kan jeg konvertere den til Beanstalk?</span>
+                    <span class="answer fragment">A: Kun hvis det er en AWS "Application". Da kan du gjøre det med <code>eb use MyAppName</code>. Ellers må du "konvertere" den manuelt, dvs. sette opp samme app fra scratch, og deretter ta ned gamle infrastrukturen.</span>
+                </section>
+
+                <section>
+                    <h2>Spørsmål</h2>
+                    <span class="question">Q: Kan jeg mappe master-branch til prod og f.eks. dev-branch til et eget dev-miljø med annet oppsett?</span>
+                    <span class="answer fragment">A: TODO: Ja, men usikker på om du kan ha egen config for hvert miljø</span>
+                </section>
+
+                <section>
+                    <h1>Flere spørsmål?</h1>
+                </section>
+            </div>
+        </div>
+
+        <script src="lib/js/head.min.js"></script>
+        <script src="js/reveal.js"></script>
+
+        <script>
+            // More info https://github.com/hakimel/reveal.js#configuration
+            Reveal.initialize({
+                history: true,
+                controls: false,
+
+                dependencies: [
+                    { src: 'plugin/markdown/marked.js' },
+                    { src: 'plugin/markdown/markdown.js' },
+                    { src: 'plugin/notes/notes.js', async: true },
+                    { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+                ]
+            });
+        </script>
+    </body>
+</html>
