@@ -11,7 +11,7 @@ Slides from the presentation can be found [here](https://helleroy.github.io/bean
 export AWS_ACCESS_KEY_ID=C99F5C7EE00F1EXAMPLE
 export AWS_SECRET_ACCESS_KEY=a63xWEj9ZFbigxqA7wI3Nuwj3mte3RDBdEXAMPLE
 ```
-- Export the region you're working in with (See short names [here](http://docs.aws.amazon.com/general/latest/gr/rande.html)). Note: not all commands will take this into consideration (?).
+- Export the region you're working in (See short names [here](http://docs.aws.amazon.com/general/latest/gr/rande.html)). Note: not all commands in the CLI will use this.
 ```
 export AWS_DEFAULT_REGION=eu-central-1
 ```
@@ -20,7 +20,7 @@ export AWS_DEFAULT_REGION=eu-central-1
 git clone git@github.com:helleroy/beanstalk-workshop.git
 cd beanstalk-workshop
 ```
-- Create ssh keys for us to ssh into the instances with.
+- Create an ssh-key for ssh access to our instances
 ```
 ssh-keygen -f ~/.ssh/beanstalkworkshop
 ```
@@ -37,7 +37,7 @@ eb init
 ```
 
 ### 1.2 Configure
-Using [create](http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/eb3-create.html), configure the Beanstalk application to use 2 x t2.micro EC2 instances with a Load Balancer in front. Remember to again specify the previously created ssh-key as key for ssh'ing into instances with.
+Using [create](http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/eb3-create.html), configure the Beanstalk application to use 2 x t2.micro EC2 instances with a Load Balancer in front. Remember to specify the ssh-key we created previously so we can ssh into our instances.
 ```
 eb create BeanstalkWorkshopApp
     --region eu-central-1
@@ -47,16 +47,19 @@ eb create BeanstalkWorkshopApp
     --scale 2
 ```
 
-This will take ~5 minutes. AWS will create loadbalancer, EC2-instances, CloudWatch alarms, security groups and S3 bucket for the environment data. You can look around the console to watch it in action.
+This will take ~5 minutes. AWS will create loadbalancer, EC2-instances, CloudWatch alarms, security groups and S3 bucket for the environment data. You can look around the console to watch it in action. You can open the console using ```eb console```
 
 ### 1.3 See it
-Voilla! Your app is up! You can open it with ```eb open```. It should respond "pong". Also, you could go to ```/hostname``` to see which EC2 instance is responding. Refresh the page, and watch it alternate between your two instances. You can also see the health status of your app with ```eb health```
+Voilà! Your app is running! You can open it with ```eb open```. It should respond "pong". Also, you could go to ```/hostname``` to see which EC2 instance is responding. Refresh the page, and watch it alternate between your two instances. You can also see the health status of your app with ```eb health```
 
 ## Step 2. Change app and deploy
+
 ### 2.1 Procfile
+The Procfile describes what Beanstalk should invoke to launch a Java app. This can be used in cases where you have multiple .jar files or need to configure the JVM in some way.
 [TODO: Explain the Procfile, make a change, See also step 4 – could be merged?]
 
 ### 2.2 Buildfile
+The Buildfile describes how Beanstalk should build and package your code when deploying. Beanstalk's Java image comes with standard build tools to enable you to build on-server (Maven, Gradle etc.)
 [TODO: Explain the Buildfile, make a change]
 
 ### 2.3 Change the app text
@@ -95,6 +98,8 @@ aws cloudwatch put-metric-alarm
     --threshold 5
     --comparison-operator GreaterThanThreshold
 ```
+[Q: Where do we find the alarm name?]
+[This can also be done using ```eb config```]
 
 ```
 aws cloudwatch put-metric-alarm
@@ -107,6 +112,8 @@ aws cloudwatch put-metric-alarm
     --threshold 2
     --comparison-operator LessThanThreshold
 ```
+[Q: Where do we find the alarm name?]
+[This can also be done using ```eb config```]
 
 ### 3.3 See the app auto-scale
 Send several requests to your webapp, to get over the threshold you've created for scaling up. You can use the command below will request your website once every 5 second, and write the IP of the EC2 instance responding.
