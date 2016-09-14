@@ -54,7 +54,7 @@ Voilla! Your app is up! You can open it with ```eb open```. It should respond "p
 
 ## Step 2. Change app and deploy
 ### 2.1 Procfile
-[TODO: Explain the Procfile, make a change]
+[TODO: Explain the Procfile, make a change, See also step 4 – could be merged?]
 
 ### 2.2 Buildfile
 [TODO: Explain the Buildfile, make a change]
@@ -120,10 +120,27 @@ By default EB will store a few logs. You can download them all using
 ```
 eb logs --all
 ```
-[TODO: Add logs from your apps to Cloudwatch. Make your own name to be logged when someone requests the page]
 
-## Step 5. Put log outputs to Slack
+In order to get better control over our logs, we'll send them to AWS Cloudwatch. In order to do this,
+we'll have to run a setup of awslogs-agent on our instances.
+
+### Step 4.1 Add logs to Cloudwatch
+TODO: Install ```https://s3.amazonaws.com.aws-cloudwatch/downloads/awslogs-agent-setup-v1.0.py``` on startup. This could be done in step 2.1? Help can be found [here](http://notes.webutvikling.org/aws-send-ec2-logs-to-slack/)
+
+[TODO: Add logs from your apps to Cloudwatch.]
+
+## Step 5. Stream log outputs to Lambda
+
+Help for these step can be found [here](http://notes.webutvikling.org/aws-send-ec2-logs-to-slack/).
+
+### Step 5.1 Send logs to a new SNS Topic
+[TODO: Create SNS and send logs there]
+
+### Step 5.2 Create Lambda function that sends to Slack
 [TODO: Add your logs to Slack]
+
+### Step 5.3 Add Lambda as subscriber to SNS Topic
+[TODO: Add our new Lambda function to SNS Topic]
 
 ## Step 6. Destroy your app
 Clean up after yourself, destroying everything related to this app with
@@ -132,5 +149,6 @@ eb terminate –all
 ```
 
 ## Reference: Create everything with Terraform
+TODO: Reference some terraform files that will setup the same things we just did (No need for them to do this?)
 
 
