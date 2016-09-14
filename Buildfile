@@ -1,1 +1,1 @@
-build: mvn package spring-boot:repackage -DskipTests
+build: mvn clean install
