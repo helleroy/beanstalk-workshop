@@ -100,6 +100,24 @@
                     </aside>
                 </section>
 
+                <section>
+                    <h2>Spørsmål</h2>
+                    <span class="question">Q: Kan jeg sette hvilke environment variables instansene skal ha?</span>
+                    <span class="answer fragment">A: Ja, med --envvars flag under <code>eb create</code>.</span>
+                    <aside class="notes">
+                        e.g. eb create --envvars BUCKET=test.data,LOGFILE=/var/logs/app.log
+                    </aside>
+                </section>
+
+                <section>
+                    <h2>Spørsmål</h2>
+                    <span class="question">Q: Kan jeg sette de ulike komponentene i ulike subnets?</span>
+                    <span class="answer fragment">A: Ja, med --vpc.dbsubnets, --vpc.ec2subnets og --vpc.elbsubnets flag under <code>eb create</code>.</span>
+                    <aside class="notes">
+                        e.g. eb create --envvars BUCKET=test.data,LOGFILE=/var/logs/app.log
+                    </aside>
+                </section>
+
                  <section>
                     <h2>Spørsmål</h2>
                     <span class="question">Q: Hvis jeg allerede har en app, kan jeg konvertere den til Beanstalk?</span>
