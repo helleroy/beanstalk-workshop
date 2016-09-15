@@ -80,22 +80,60 @@ eb deploy
 ```
 During the deploy you will see that EB deploys to one instance at a time. If you refresh the webpage while it deploys you can observe both versions of your application.
 
-## Step 3. Demonstrate autoscaling
+## Step 3. Configure auto scaling
+
+You will use ```eb config```for the following steps. This command will open the current environment configuration for your EB application in a text editor (Nano by default).
+It may not work properly on some machines; we've had trouble getting it to work on OS X when the home folder has whitespaces in it, for instance.
+Because of this there's a workaround where you can use the AWS CLI to do the same steps. 
 
 ### 3.1 Set auto scaling minimum and maximum
-When you specified ```--scale 2``` in 1.2, you set both the minimum and maximum amount of instances the loadbalancer should spin up. 
-In order for the app to scale dynamically, you can use aws cli:
+When you specified ```--scale 2``` in 1.2, you set both the minimum and maximum amount of instances the Load Balancer should spin up. 
+In order for the app to scale dynamically, you can use either of the following:
+
+- EB CLI
+Use ```eb config```, locate the following section in the configuration, and change it like so:
+```
+aws:autoscaling:asg:
+    Availability Zones: Any
+    Cooldown: '360'
+    Custom Availability Zones: ''
+    MaxSize: '4'
+    MinSize: '2'
+```
+Then save and close the file. EB will automatically deploy the new environment configuration.
+
+- AWS CLI
+Invoke the following using ```aws```
 ```
 aws autoscaling update-auto-scaling-group
     --region eu-central-1
     --auto-scaling-group-name "<my-auto-scaling-group>"
-    --min-size 1
-    --max-size 3
+    --min-size 2
+    --max-size 4
 ```
 
 ### 3.2 Set metrics to trigger alarm
-Alarms that will scale your application are based on network traffic by default. Change these to instead be based on number of requests. 
-You can see your current alarms in the CloudWatch part of AWS Console.
+The alarms that will scale your application are based on network traffic by default. You can see your current alarms in the CloudWatch part of the AWS Console.
+Change these to instead be based on the number of requests by using either of the following:
+
+- EB CLI
+Use ```eb config```, locate the following section in the configuration, and change it like so:
+```
+  AWSEBCloudwatchAlarmHigh.aws:autoscaling:trigger:
+    UpperThreshold: '5'
+  AWSEBCloudwatchAlarmLow.aws:autoscaling:trigger:
+    BreachDuration: '5'
+    EvaluationPeriods: '1'
+    LowerThreshold: '2'
+    MeasureName: RequestCount
+    Period: '5'
+    Statistic: Average
+    Unit: Count
+```
+Then save and close the file. EB will automatically deploy the new environment configuration.
+
+- AWS CLI
+Invoke the following using ```aws```
 ```
 aws cloudwatch put-metric-alarm
     --alarm-name "<my-existing-AWSEBCloudwatchAlarmHigh-alarm>"
@@ -107,8 +145,6 @@ aws cloudwatch put-metric-alarm
     --threshold 5
     --comparison-operator GreaterThanThreshold
 ```
-[Q: Where do we find the alarm name?]
-[This can also be done using ```eb config```]
 
 ```
 aws cloudwatch put-metric-alarm
@@ -121,8 +157,6 @@ aws cloudwatch put-metric-alarm
     --threshold 2
     --comparison-operator LessThanThreshold
 ```
-[Q: Where do we find the alarm name?]
-[This can also be done using ```eb config```]
 
 ### 3.3 See the app auto-scale
 Send several requests to your webapp to get over the threshold you've created for scaling up. 
