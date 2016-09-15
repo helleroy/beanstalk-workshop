@@ -46,6 +46,12 @@ eb create BeanstalkWorkshopApp --region eu-central-1 --instance_type t2.micro --
 This will take ~5 minutes. AWS will create loadbalancer, EC2-instances, CloudWatch alarms, security groups and S3 bucket for the environment data. 
 You can look around the console to watch it in action. You can open the console using ```eb console```
 
+Note: If the command above fails due to missing default vpc or missing default subnet , you can remove your steps with ```eb --terminate```. Then, add the following to the previous command _(replace vpc id's and subnet id's with those you wish to place infrastructure in)_
+```
+--vpc.id vpc-64b1870d 
+--vpc.ec2subnets subnet-50866a2a,subnet-c007d8a8 
+```
+
 ### 1.3 See it
 Voilà! Your app is running! You can open it with ```eb open``` - it should respond with some text. You can also go to ```/hostname``` to see which EC2 instance is responding. 
 Refresh the page and watch it alternate between your two instances. You can also see the health status of your app with ```eb health```.
