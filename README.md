@@ -90,7 +90,7 @@ Because of this there's a workaround where you can use the AWS CLI to do the sam
 When you specified ```--scale 2``` in 1.2, you set both the minimum and maximum amount of instances the Load Balancer should spin up. 
 In order for the app to scale dynamically, you can use either of the following:
 
-- EB CLI
+- EB CLI:
 Use ```eb config```, locate the following section in the configuration, and change it like so:
 ```
 aws:autoscaling:asg:
@@ -102,7 +102,7 @@ aws:autoscaling:asg:
 ```
 Then save and close the file. EB will automatically deploy the new environment configuration.
 
-- AWS CLI
+- AWS CLI:
 Invoke the following using ```aws```
 ```
 aws autoscaling update-auto-scaling-group
@@ -116,7 +116,7 @@ aws autoscaling update-auto-scaling-group
 The alarms that will scale your application are based on network traffic by default. You can see your current alarms in the CloudWatch part of the AWS Console.
 Change these to instead be based on the number of requests by using either of the following:
 
-- EB CLI
+- EB CLI:
 Use ```eb config```, locate the following section in the configuration, and change it like so:
 ```
   AWSEBCloudwatchAlarmHigh.aws:autoscaling:trigger:
@@ -132,7 +132,7 @@ Use ```eb config```, locate the following section in the configuration, and chan
 ```
 Then save and close the file. EB will automatically deploy the new environment configuration.
 
-- AWS CLI
+- AWS CLI:
 Invoke the following using ```aws```
 ```
 aws cloudwatch put-metric-alarm
