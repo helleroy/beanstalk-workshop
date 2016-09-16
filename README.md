@@ -33,22 +33,14 @@ cd beanstalk-workshop
 ### 1.1 Initialize
 Using [init](http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/eb3-init.html), initialize beanstalk on this folder with java-8 as platform. Use the name of the ssh-key you created previously.
 ```
-eb init
-    --region eu-central-1
-    --keyname beanstalkworkshop
-    --platform java-8
+eb init --region eu-central-1 --keyname beanstalkworkshop --platform java-8
 ```
 
 ### 1.2 Configure
 Using [create](http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/eb3-create.html), configure the Beanstalk application to use 2 x t2.micro EC2 instances with a Load Balancer in front. 
 Remember to specify the ssh-key you created previously so you can ssh into our instances.
 ```
-eb create BeanstalkWorkshopApp
-    --region eu-central-1
-    --instance_type t2.micro
-    --keyname beanstalkworkshop
-    --platform java-8
-    --scale 2
+eb create BeanstalkWorkshopApp --region eu-central-1 --instance_type t2.micro --keyname beanstalkworkshop --platform java-8 --scale 2
 ```
 
 This will take ~5 minutes. AWS will create loadbalancer, EC2-instances, CloudWatch alarms, security groups and S3 bucket for the environment data. 
