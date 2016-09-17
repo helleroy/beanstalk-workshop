@@ -28,10 +28,13 @@
             <div class="slides">
                 <section>
                     <h1>AWS Elastic Beanstalk</h1>
+                </section>
+                <section>
+                    <h2>Agenda</h2>
                     <ul>
                         <li class="fragment">Hva er det?</li>
                         <li class="fragment">Hvorfor bruke det?</li>
-                        <li class="fragment">Workshop: Hvordan bruke det?</li>
+                        <li class="fragment">Hvordan bruke det? (workshop)</li>
                         <li class="fragment">Spørsmål</li>
                     </ul>
                 </section>
@@ -59,27 +62,46 @@
                     <aside class="notes">
                         <ul>
                             <li>Gratis: Betaler kun for den underliggende infrastrukturen</li>
-                            <li>Enklere: Sammenlign den kommende workshoppen med det vi gjorde i vår</li>
+                            <li>Enklere: Sammenlign den kommende workshoppen med det vi gjorde i vår. Gir også mulighet for bruk av CodeDeploy for automatisk bygg og deploys.</li>
                             <li>Raskere: Selv om du kan alt fra før, er dette mindre arbeid. Du kan også bruke eb clone for å duplisere et miljø.</li>
-                            <li>Customizable: Du kan endre komponentene etter oppsett</li>
+                            <li>Customizable: Du kan endre komponentene med ```eb config``` eller via vanlige måter (du har fortsatt full kontroll over EC2-instanser osv.</li>
                         </ul>
                     </aside>
                 </section>
                 <section>
                     <h2>Hvorfor IKKE bruke Beanstalk?</h2>
                     <ul>
+                        <li class="fragment">Hvis språk/stack du vil bruke <a href="https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/concepts.platforms.html">ikke er støttet</a></li>
                         <li class="fragment">OpsWorks bedre alternativ for stor infrastruktur</li>
-                        <li class="fragment">TODO: Bør finne mer årsaker</li>
+                        <li class="fragment">Hvis du allerede har infrastrukturen oppe</li>
                     </ul>
                     <aside class="notes">
                         <ul>
+                            <li>Det er ikke -så- mange platformer som støttes, men de jobber visstnok på å utvide det</li>
                             <li>AWS OpsWorks gir mer granularitet og kontroll</li>
+                            <li>Beanstalk hjelper deg først og fremst med oppsett og deploy. Hvis du allerede har infrastrukturen oppe, gir det lite gevinst å skifte.</li>
                         </ul>
                     </aside>
                 </section>
                 <section>
-                    <h2>Workshop: Hvordan bruke Beanstalk</h2>
-                    <a href="https://github.com/helleroy/beanstalk-workshop">https://github.com/helleroy/beanstalk-workshop</a>
+                    <h2>Hvordan bruke Beanstalk (workshop)</h2>
+                    <ul>
+                        <li class="fragment">Enkel Java-applikasjon med Lastbalanserer</li>
+                        <li class="fragment">Deploy</li>
+                        <li class="fragment">Autoskalering</li>
+                        <li class="fragment">Logging til Slack</li>
+                        <li class="fragment">
+                            <a href="https://github.com/helleroy/beanstalk-workshop">https://github.com/helleroy/beanstalk-workshop</a>
+                        </li>
+                    </ul>
+                    <aside class="notes">
+                        <ul>
+                            <li>Java-app = EC2 + ELB</li>
+                            <li>Logging til Slack = Lambda</li>
+                            <li>Det blir også CloudWatch alarmer (Legges til automatisk)</li>
+                        </ul>
+                    </aside>
+                    
                 </section>
 
                 <section>
@@ -103,7 +125,7 @@
                 <section>
                     <h2>Spørsmål</h2>
                     <span class="question">Q: Kan jeg sette hvilke environment variables instansene skal ha?</span>
-                    <span class="answer fragment">A: Ja, med --envvars flag under <code>eb create</code>.</span>
+                    <span class="answer fragment">A: Ja, med <code>--envvars</code> flag under <code>eb create</code>.</span>
                     <aside class="notes">
                         e.g. eb create --envvars BUCKET=test.data,LOGFILE=/var/logs/app.log
                     </aside>
@@ -112,7 +134,7 @@
                 <section>
                     <h2>Spørsmål</h2>
                     <span class="question">Q: Kan jeg sette de ulike komponentene i ulike subnets?</span>
-                    <span class="answer fragment">A: Ja, med --vpc.dbsubnets, --vpc.ec2subnets og --vpc.elbsubnets flag under <code>eb create</code>.</span>
+                    <span class="answer fragment">A: Ja, med <code>--vpc.dbsubnets</code>, <code>--vpc.ec2subnets</code> og <code>--vpc.elbsubnets</code> flag under <code>eb create</code>.</span>
                     <aside class="notes">
                         e.g. eb create --envvars BUCKET=test.data,LOGFILE=/var/logs/app.log
                     </aside>
@@ -126,8 +148,8 @@
 
                 <section>
                     <h2>Spørsmål</h2>
-                    <span class="question">Q: Kan jeg mappe master-branch til prod og f.eks. dev-branch til et eget dev-miljø med annet oppsett?</span>
-                    <span class="answer fragment">A: TODO: Ja, men usikker på om du kan ha egen config for hvert miljø</span>
+                    <span class="question">Q: Hvordan bruker jeg Beanstalk med utvikling-, -test og prodmiljøer?</span>
+                    <span class="answer fragment">A: Med <code>eb clone</code> kan du klone miljøer, og med <code>eb use</code> kan du mappe én git branch mot ett miljø.</span>
                 </section>
 
                 <section>

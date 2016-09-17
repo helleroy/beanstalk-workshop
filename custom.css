@@ -7,3 +7,10 @@
     display: block;
     font-weight: normal;
 }
+
+.reveal code {
+	display: inline-block;
+	padding: 0 1rem;
+	margin: 0 1rem;
+	border: 1px dashed white;
+}
