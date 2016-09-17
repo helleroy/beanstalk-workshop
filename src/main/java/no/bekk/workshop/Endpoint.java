@@ -18,8 +18,8 @@ public class Endpoint {
 
     @RequestMapping(name = "/500", path = "/500")
     public String Error() {
-        System.err.println("Request: /500 says <your-name>");
-        throw new RuntimeException("Intended Error from <your-name>");
+        System.err.println("Request: /500 says Error: <your-name>");
+        return "Error";
     }
 
     @RequestMapping(name = "/hostname", path = "/hostname")

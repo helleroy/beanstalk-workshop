@@ -192,9 +192,42 @@ aws iam attach-role-policy --policy-arn arn:aws:iam::aws:policy/CloudWatchLogsFu
 
 Verify that logs appear in Cloudwatch by going to AWS CloudWatch > Logs. These will be named after your instance id, and show logs from nginx. 
 
+
 ### Step 4.2 Add application logs to CloudWatch
 By default, the logs that are named after your instance id, and they only show logs from nginx. If we want to show logs from the application (i.e. ```System.out.println``` and ```System.err.println```), we'll have to specify them in ```.ebextensions/cloudwatchlogs-nginx/cwl-webrequest-metrics.config```.
 
+
+#### Step 4.2.1 Create new log groups 
+We'll create one log group for access logs, and one for error logs
+
+Below ```Resources:```, insert the following:
+```
+AWSEBCloudWatchLogs8832c8d3f1a54c238a40e36f31ef55a0ApplicationErrorLog: 
+  Type: "AWS::Logs::LogGroup"
+  DependsOn: AWSEBBeanstalkMetadata
+  DeletionPolicy: Retain
+  Properties:
+    LogGroupName: 
+      "Fn::GetOptionSetting":
+        Namespace: "aws:elasticbeanstalk:application:environment"
+        OptionName: WebRequestCWLogGroup
+        DefaultValue: {"Fn::Join":["-", [{ "Ref":"AWSEBEnvironmentName" }, "application-error"]]}
+    RetentionInDays: 14
+
+AWSEBCloudWatchLogs8832c8d3f1a54c238a40e36f31ef55a0ApplicationAccessLog: 
+  Type: "AWS::Logs::LogGroup"
+  DependsOn: AWSEBBeanstalkMetadata
+  DeletionPolicy: Retain
+  Properties:
+    LogGroupName: 
+      "Fn::GetOptionSetting":
+        Namespace: "aws:elasticbeanstalk:application:environment"
+        OptionName: WebRequestCWLogGroup
+        DefaultValue: {"Fn::Join":["-", [{ "Ref":"AWSEBEnvironmentName" }, "application-access"]]}
+    RetentionInDays: 14
+```
+
+#### Step 4.2.1 Add logs to the new log groups 
 Find ```files:``` (below ```CWLogsAgentConfigSetup:```) and insert the following:
 ```
 "/tmp/cwlogs/conf.d/web-access.conf":
@@ -202,7 +235,7 @@ Find ```files:``` (below ```CWLogsAgentConfigSetup:```) and insert the following
     [web-access_log]
     file = /var/log/web-1.log
     log_group_name = `{ "Ref" : "AWSEBCloudWatchLogs8832c8d3f1a54c238a40e36f31ef55a0WebRequestLogGroup" }`
-    log_stream_name = web-access
+    log_stream_name = {instance_id}
   mode  : "000400"
   owner : root
   group : root
@@ -211,28 +244,46 @@ Find ```files:``` (below ```CWLogsAgentConfigSetup:```) and insert the following
   content : |
     [web-error_log]
     file = /var/log/web-1.error.log
-    log_group_name = `{ "Ref" : "AWSEBCloudWatchLogs8832c8d3f1a54c238a40e36f31ef55a0WebRequestLogGroup" }`
-    log_stream_name = web-error
+    log_group_name = `{ "Ref" : "AWSEBCloudWatchLogs8832c8d3f1a54c238a40e36f31ef55a0ApplicationErrorLog" }`
+    log_stream_name = {instance_id}
   mode  : "000400"
   owner : root
   group : root
 ```
 
+### Step 4.3 Commit and verify the changes
 
+Commit and deploy the changes with:
+```
+git add .ebextensions
+git commit -m "Add application logging"
+eb deploy
+```
+
+Go to /500 and /hostname on your server, then verify that the logs have appeared in AWS Console, under CloudWatch > Logs.
 
 ## Step 5. Stream log outputs to Lambda
 
+Now that our logs are in CloudWatch, we can stream them to Slack using a Lambda function.
 
-Help for these step can be found [here](http://notes.webutvikling.org/aws-send-ec2-logs-to-slack/).
+### Step 5.1 Configure a Lamba function
+- From the AWS Console, go to Lambda.
+- Find and select ```cloudwatch-log-to-loggly```.
+- Configure the trigger with ```BeanstalkWorkshopApp-application-error``` and check ```Enable trigger``` (You can leave the filter blank)
 
-### Step 5.1 Send logs to a new SNS Topic
-[TODO: Create SNS and send logs there]
+### Step 5.2 Replace Lambda code
+On the next screen we'll replace the code so it logs to Slack instead of Loggly.
 
-### Step 5.2 Create Lambda function that sends to Slack
-[TODO: Add your logs to Slack]
+- Name your Lambda function and select Runtime ```Node.js 4.3```.
 
-### Step 5.3 Add Lambda as subscriber to SNS Topic
-[TODO: Add our new Lambda function to SNS Topic]
+- Under Lambda function code, select Code Entry type ```Edit code inline```, and replace the code with the code from [this Github Gist](https://gist.github.com/tomfa/f4e090cbaff0189eba17c0fc301c63db#file-cwlogsslack-js).
+
+We have taken the liberty of creating a simple Slack channel with an [Incoming webhook](https://api.slack.com/incoming-webhooks). We'll use its Webhook URL to post to.
+
+- Set ```UNENCRYPTED_URL``` to ```/services/T0FHGDP0T/B2BEAUMGQ/BXwRUZ1ZuW8hz61cWtkrclpN```. 
+- Set ```CHANNEL``` to ```#beanstalk-workshop```
+
+Voilà! Your error logs should now appear in our Slack channel on the projector :)
 
 ## Step 6. Destroy your app
 Clean up after yourself, destroying everything related to this app with
