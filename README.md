@@ -175,11 +175,8 @@ EB will store a few logs by default. You can download them all using
 eb logs --all
 ```
 
-Your **error logs** will be stored in 
-```/var/log/web-1.error.log```
-
-and your **access logs** will by default be stored at
-```/var/log/web-1.log```
+Your **error logs** will be stored in ```/var/log/web-1.error.log```
+and your **access logs** will by default be stored at ```/var/log/web-1.log```
 
 In order to get better control over our logs, we'll send them to AWS Cloudwatch, and from there we want the error logs to appear in Slack. 
 
