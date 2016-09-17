@@ -58,24 +58,25 @@ Refresh the page and watch it alternate between your two instances. You can also
 
 ## Step 2. Change app and deploy
 
-### 2.1 Procfile
+**Procfile**
 The Procfile describes what Beanstalk should invoke to launch a Java app. You can use this in cases where you have multiple .jar files or need to configure the JVM in some way.
 Without a Procfile Beanstalk will by default invoke ```java -jar <your-app-name>.jar```.
 
-### 2.2 Buildfile
+**Buildfile**
 The Buildfile describes how Beanstalk should build and package your code when deploying. Beanstalk's Java image comes with standard build tools to enable you to build on-server (Maven, Gradle etc.)
 More often than not you will probably be using a build server for this, but the option is there.
 
-### 2.3 Change the app text
+### 2.1 Change the app text
 Change the response text from the app at ```Endpoint.java```. For example, at the method ```ping```, replace ```"pong"``` with your own reply. 
 Also, change the method ```error``` to log your name in System.err.println (We're going to use it for a later step).
 
-### 2.4 Deploy the changes
+### 2.2 Deploy the changes
 Commit the changes and, using [deploy](http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/eb3-deploy.html), deploy your changes to aws.
 ```
 git commit -am "Change response text"
 eb deploy
 ```
+
 During the deploy you will see that EB deploys to one instance at a time. If you refresh the webpage while it deploys you can observe both versions of your application.
 
 ## Step 3. Configure auto scaling
@@ -98,6 +99,7 @@ aws:autoscaling:asg:
     MaxSize: '4'
     MinSize: '2'
 ```
+
 Then save and close the file. EB will automatically deploy the new environment configuration.
 
 - AWS CLI:
@@ -124,7 +126,7 @@ Use ```eb config```, locate the following section in the configuration, and chan
     EvaluationPeriods: '1'
     LowerThreshold: '2'
     MeasureName: RequestCount
-    Period: '5'
+    Period: '1'
     Statistic: Average
     Unit: Count
 ```
@@ -142,9 +144,7 @@ aws cloudwatch put-metric-alarm
     --evaluation-periods 60
     --threshold 5
     --comparison-operator GreaterThanThreshold
-```
-
-```
+ 
 aws cloudwatch put-metric-alarm
     --alarm-name "<my-existing-AWSEBCloudwatchAlarmLow-alarm>"
     --metric-name RequestCount
@@ -161,7 +161,10 @@ Send several requests to your webapp to get over the threshold you've created fo
 You can use the command below will request your website once every 5 second, and write the IP of the EC2 instance responding.
 ```
 while sleep 5; do curl <dns-name-for-my-load-balancer>/hostname; done;
-```
+``` 
+
+*Your DNS name can be found with ```eb open```*
+
 After a couple of minutes, a new instance will be spun up, and respond with a new IP for your requests.
 
 ## Step 4. Log output
@@ -193,7 +196,7 @@ Help for these step can be found [here](http://notes.webutvikling.org/aws-send-e
 ## Step 6. Destroy your app
 Clean up after yourself, destroying everything related to this app with
 ```
-eb terminate –all
+eb terminate -–all
 ```
 
 ## Reference: Create everything with Terraform
