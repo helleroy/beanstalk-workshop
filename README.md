@@ -14,7 +14,7 @@ export AWS_ACCESS_KEY_ID=C99F5C7EE00F1EXAMPLE
 export AWS_SECRET_ACCESS_KEY=a63xWEj9ZFbigxqA7wI3Nuwj3mte3RDBdEXAMPLE
 ```
 - Export the region you're working in (See short names [here](http://docs.aws.amazon.com/general/latest/gr/rande.html)). 
-Note: not all commands in the CLI will use this.
+*(Note: not all commands in the CLI will use this)*
 ```
 export AWS_DEFAULT_REGION=eu-central-1
 ```
@@ -31,30 +31,28 @@ cd beanstalk-workshop
 ## Step 1. Set up Beanstalk
 
 ### 1.1 Initialize
-Using [init](http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/eb3-init.html), initialize beanstalk on this folder with java-8 as platform. Use the name of the ssh-key you created previously.
+- Using [init](http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/eb3-init.html), initialize beanstalk on this folder with java-8 as platform. Use the name of the ssh-key you created previously.
 ```
 eb init --region eu-central-1 --keyname beanstalkworkshop --platform java-8
 ```
 
 ### 1.2 Configure
-Using [create](http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/eb3-create.html), configure the Beanstalk application to use 2 x t2.micro EC2 instances with a Load Balancer in front. 
-Remember to specify the ssh-key you created previously so you can ssh into our instances.
+- Using [create](http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/eb3-create.html), configure the Beanstalk application to use 2 x t2.micro EC2 instances with a Load Balancer in front. Remember to specify the ssh-key you created previously so you can ssh into our instances.
 ```
 eb create BeanstalkWorkshopApp --region eu-central-1 --instance_type t2.micro --keyname beanstalkworkshop --platform java-8 --scale 2
 ```
 
 This will take ~5 minutes. AWS will create loadbalancer, EC2-instances, CloudWatch alarms, security groups and S3 bucket for the environment data. 
+
 You can look around the console to watch it in action. You can open the console using ```eb console```
 
-Note: If the command above fails due to missing default vpc or missing default subnet , you can remove your steps with ```eb --terminate```. Then, add the following to the previous command _(replace vpc id's and subnet id's with those you wish to place infrastructure in)_
-```
---vpc.id vpc-64b1870d 
---vpc.ec2subnets subnet-50866a2a,subnet-c007d8a8 
-```
+*(Note: If the command above fails due to missing default vpc or missing default subnet, this means you have been playing around too much in AWS. You can then go back to Step 1.1, and do the workshop with another region. Alternatively, see [create](http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/eb3-create.html) on how to specify a vpc, subnet etc.)*
 
 ### 1.3 See it
-Voilà! Your app is running! You can open it with ```eb open``` - it should respond with some text. You can also go to ```/hostname``` to see which EC2 instance is responding. 
-Refresh the page and watch it alternate between your two instances. You can also see the health status of your app with ```eb health```.
+Voilà! Your app is running! 
+
+- You can open it with ```eb open``` - it should respond with ```pong```. You can also go to ```/hostname``` to see which EC2 instance is responding. 
+- Refresh the page and watch it alternate between your two instances. You can also see the health status of your app with ```eb health```.
 
 ## Step 2. Change app and deploy
 
@@ -67,11 +65,12 @@ The Buildfile describes how Beanstalk should build and package your code when de
 More often than not you will probably be using a build server for this, but the option is there.
 
 ### 2.1 Change the app text
-Change the response text from the app at ```Endpoint.java```. For example, at the method ```ping```, replace ```"pong"``` with your own reply. 
-Also, change the method ```error``` to log your name in System.err.println (We're going to use it for a later step).
+- Change the response text from the app at ```Endpoint.java```. For example, at the method ```ping```, replace ```"pong"``` with your own reply. 
+
+- Also, change the method ```error``` to log your name in System.err.println. (We'll print this to Slack at the end of the workshop).
 
 ### 2.2 Deploy the changes
-Commit the changes and, using [deploy](http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/eb3-deploy.html), deploy your changes to aws.
+- Commit the changes and, using [deploy](http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/eb3-deploy.html), deploy your changes to aws.
 ```
 git commit -am "Change response text"
 eb deploy
@@ -87,6 +86,7 @@ Because of this there's a workaround where you can use the AWS CLI to do the sam
 
 ### 3.1 Set auto scaling minimum and maximum
 When you specified ```--scale 2``` in 1.2, you set both the minimum and maximum amount of instances the Load Balancer should spin up. 
+
 In order for the app to scale dynamically, you can use either of the following:
 
 - EB CLI:
@@ -103,7 +103,7 @@ aws:autoscaling:asg:
 Then save and close the file. EB will automatically deploy the new environment configuration.
 
 - AWS CLI:
-Invoke the following using ```aws```
+**If ```eb config``` didn't work**, invoke the following using ```aws```
 ```
 aws autoscaling update-auto-scaling-group
     --region eu-central-1
@@ -130,10 +130,11 @@ Use ```eb config```, locate the following section in the configuration, and chan
     Statistic: Average
     Unit: Count
 ```
+
 Then save and close the file. EB will automatically deploy the new environment configuration.
 
 - AWS CLI:
-Invoke the following using ```aws```
+**If ```eb config``` didn't work**, invoke the following using ```aws```
 ```
 aws cloudwatch put-metric-alarm
     --alarm-name "<my-existing-AWSEBCloudwatchAlarmHigh-alarm>"
@@ -158,12 +159,13 @@ aws cloudwatch put-metric-alarm
 
 ### 3.3 See the app auto-scale
 Send several requests to your webapp to get over the threshold you've created for scaling up. 
-You can use the command below will request your website once every 5 second, and write the IP of the EC2 instance responding.
+
+- You can use the command below will request your website once every 5 second, and write the IP of the EC2 instance responding.
 ```
 while sleep 5; do curl <dns-name-for-my-load-balancer>/hostname; done;
 ``` 
 
-*Your DNS name can be found with ```eb open```*
+*(Note: Your DNS name can be found with ```eb open```)*
 
 After a couple of minutes, a new instance will be spun up, and respond with a new IP for your requests.
 
@@ -184,8 +186,9 @@ In order to get better control over our logs, we'll send them to AWS Cloudwatch,
 ### Step 4.1 Add logs to Cloudwatch
 We've taken the liberty of adding a cloudwatch extension to this beanstalk (see ```.ebextensions/cloudwatchlogs-nginx```). This is the unchanged [EB extension for nginx CloudWatch](http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/AWSHowTo.cloudwatchlogs.html#AWSHowTo.cloudwatchlogs.files).
 
-In order for our instances to be allowed to put logs on Cloudwatch, we can add ```CloudWatchLogsFullAccess``` policy to the instance profile role. This role is by default ```aws-elasticbeanstalk-ec2-role```, and can be verified with ```eb config``` (find IamInstanceProfile)
+In order for our instances to be allowed to put logs on Cloudwatch, we must add ```CloudWatchLogsFullAccess``` policy to the instance profile role. This role is by default ```aws-elasticbeanstalk-ec2-role```, and can be verified with ```eb config``` (find IamInstanceProfile)
 
+- Grant your instances access to log to CloudWatch
 ```
 aws iam attach-role-policy --policy-arn arn:aws:iam::aws:policy/CloudWatchLogsFullAccess --role-name aws-elasticbeanstalk-ec2-role
 ```
@@ -200,7 +203,7 @@ By default, the logs that are named after your instance id, and they only show l
 #### Step 4.2.1 Create new log groups 
 We'll create one log group for access logs, and one for error logs
 
-Below ```Resources:```, insert the following:
+- Below ```Resources:```, insert the following:
 ```
 AWSEBCloudWatchLogs8832c8d3f1a54c238a40e36f31ef55a0ApplicationErrorLog: 
   Type: "AWS::Logs::LogGroup"
@@ -228,7 +231,7 @@ AWSEBCloudWatchLogs8832c8d3f1a54c238a40e36f31ef55a0ApplicationAccessLog:
 ```
 
 #### Step 4.2.1 Add logs to the new log groups 
-Find ```files:``` (below ```CWLogsAgentConfigSetup:```) and insert the following:
+- Find ```files:``` (below ```CWLogsAgentConfigSetup:```) and insert the following:
 ```
 "/tmp/cwlogs/conf.d/web-access.conf":
   content : |
@@ -253,37 +256,37 @@ Find ```files:``` (below ```CWLogsAgentConfigSetup:```) and insert the following
 
 ### Step 4.3 Commit and verify the changes
 
-Commit and deploy the changes with:
+- Commit and deploy the changes with:
 ```
 git add .ebextensions
 git commit -m "Add application logging"
 eb deploy
 ```
 
-Go to /500 and /hostname on your server, then verify that the logs have appeared in AWS Console, under CloudWatch > Logs.
+Go to ```/500``` and ```/hostname``` on your server, then verify that the logs have appeared in [AWS Console](https://console.aws.amazon.com/console/home?region=eu-central-1), under CloudWatch > Logs > BeanstalkWorkshopApp-application-error.
 
 ## Step 5. Stream log outputs to Lambda
 
 Now that our logs are in CloudWatch, we can stream them to Slack using a Lambda function.
 
-### Step 5.1 Configure a Lamba function
+### Step 5.1 Create a Lamba function
 - From the AWS Console, go to Lambda.
 - Find and select ```cloudwatch-log-to-loggly```.
-- Configure the trigger with ```BeanstalkWorkshopApp-application-error``` and check ```Enable trigger``` (You can leave the filter blank)
+- Name the filter, but leave the pattern blank
+- Use log group ```BeanstalkWorkshopApp-application-error```
+- Check ```Enable trigger``` and click Next. 
 
 ### Step 5.2 Replace Lambda code
 On the next screen we'll replace the code so it logs to Slack instead of Loggly.
 
 - Name your Lambda function and select Runtime ```Node.js 4.3```.
-
 - Under Lambda function code, select Code Entry type ```Edit code inline```, and replace the code with the code from [this Github Gist](https://gist.github.com/tomfa/f4e090cbaff0189eba17c0fc301c63db#file-cwlogsslack-js).
+- At the top of the inserted code, set ```UNENCRYPTED_URL``` to ```'/services/T0FHGDP0T/B2BEAUMGQ/BXwRUZ1ZuW8hz61cWtkrclpN'```. *(This is the [Incoming webhook](https://api.slack.com/incoming-webhooks) of a Slack channel we've set up for this workshop)*
+- At the top of the inserted code, set ```CHANNEL``` to ```'#beanstalk-workshop'```
+- Under ```Lambda function handler and role```, you can leave all the options as default. Just remember to name your role
+- Click Next
 
-We have taken the liberty of creating a simple Slack channel with an [Incoming webhook](https://api.slack.com/incoming-webhooks). We'll use its Webhook URL to post to.
-
-- Set ```UNENCRYPTED_URL``` to ```/services/T0FHGDP0T/B2BEAUMGQ/BXwRUZ1ZuW8hz61cWtkrclpN```. 
-- Set ```CHANNEL``` to ```#beanstalk-workshop```
-
-Voilà! Your error logs should now appear in our Slack channel on the projector :)
+Voilà! You're done! Your error logs should now appear in our Slack channel on the projector :)
 
 ## Step 6. Destroy your app
 Clean up after yourself, destroying everything related to this app with
