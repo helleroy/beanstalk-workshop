@@ -173,14 +173,55 @@ EB will store a few logs by default. You can download them all using
 eb logs --all
 ```
 
-In order to get better control over our logs, we'll send them to AWS Cloudwatch. In order to do this we'll have to run a setup of awslogs-agent on our instances.
+Your **error logs** will be stored in 
+```/var/log/web-1.error.log```
+
+and your **access logs** will by default be stored at
+```/var/log/web-1.log```
+
+In order to get better control over our logs, we'll send them to AWS Cloudwatch, and from there we want the error logs to appear in Slack. 
 
 ### Step 4.1 Add logs to Cloudwatch
-TODO: Install ```https://s3.amazonaws.com.aws-cloudwatch/downloads/awslogs-agent-setup-v1.0.py``` on startup. This could be done in step 2.1? Help can be found [here](http://notes.webutvikling.org/aws-send-ec2-logs-to-slack/)
+We've taken the liberty of adding a cloudwatch extension to this beanstalk (see ```.ebextensions/cloudwatchlogs-nginx```). This is the unchanged [EB extension for nginx CloudWatch](http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/AWSHowTo.cloudwatchlogs.html#AWSHowTo.cloudwatchlogs.files).
 
-[TODO: Add logs from your apps to Cloudwatch.]
+In order for our instances to be allowed to put logs on Cloudwatch, we can add ```CloudWatchLogsFullAccess``` policy to the instance profile role. This role is by default ```aws-elasticbeanstalk-ec2-role```, and can be verified with ```eb config``` (find IamInstanceProfile)
+
+```
+aws iam attach-role-policy --policy-arn arn:aws:iam::aws:policy/CloudWatchLogsFullAccess --role-name aws-elasticbeanstalk-ec2-role
+```
+
+Verify that logs appear in Cloudwatch by going to AWS CloudWatch > Logs. These will be named after your instance id, and show logs from nginx. 
+
+### Step 4.2 Add application logs to CloudWatch
+By default, the logs that are named after your instance id, and they only show logs from nginx. If we want to show logs from the application (i.e. ```System.out.println``` and ```System.err.println```), we'll have to specify them in ```.ebextensions/cloudwatchlogs-nginx/cwl-webrequest-metrics.config```.
+
+Find ```files:``` (below ```CWLogsAgentConfigSetup:```) and insert the following:
+```
+"/tmp/cwlogs/conf.d/web-access.conf":
+  content : |
+    [web-access_log]
+    file = /var/log/web-1.log
+    log_group_name = `{ "Ref" : "AWSEBCloudWatchLogs8832c8d3f1a54c238a40e36f31ef55a0WebRequestLogGroup" }`
+    log_stream_name = web-access
+  mode  : "000400"
+  owner : root
+  group : root
+
+"/tmp/cwlogs/conf.d/web-error.conf":
+  content : |
+    [web-error_log]
+    file = /var/log/web-1.error.log
+    log_group_name = `{ "Ref" : "AWSEBCloudWatchLogs8832c8d3f1a54c238a40e36f31ef55a0WebRequestLogGroup" }`
+    log_stream_name = web-error
+  mode  : "000400"
+  owner : root
+  group : root
+```
+
+
 
 ## Step 5. Stream log outputs to Lambda
+
 
 Help for these step can be found [here](http://notes.webutvikling.org/aws-send-ec2-logs-to-slack/).
 
