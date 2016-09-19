@@ -14,3 +14,7 @@
 	margin: 0 1rem;
 	border: 1px dashed white;
 }
+
+.reveal span.authors {
+	font-size: 1rem;
+}
