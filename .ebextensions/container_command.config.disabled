@@ -1,8 +1,0 @@
-container_commands:
-  01_init_pg_pass:
-    command: echo "${RDS_HOSTNAME}:${RDS_PORT}:${RDS_DB_NAME}:${RDS_USERNAME}:${RDS_PASSWORD}" > /home/ec2-user/.pgpass && chmod 600 /home/ec2-user/.pgpass && chown ec2-user:ec2-user /home/ec2-user/.pgpass
-  02_create_schema:
-    command: echo "create schema if not exists app authorization superuser;" | psql -h "${RDS_HOSTNAME}" "${RDS_DB_NAME}" "${RDS_USERNAME}"
-    leader_only: true
-  03_migrate_database:
-    .... flyway
