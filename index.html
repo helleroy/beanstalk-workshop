@@ -125,9 +125,14 @@
                 <section>
                     <h2>Spørsmål</h2>
                     <span class="question">Q: Kan jeg sette hvilke environment variables instansene skal ha?</span>
-                    <span class="answer fragment">A: Ja, med <code>--envvars</code> flag under <code>eb create</code>.</span>
+                    <span class="answer fragment">A: Ja, med <code>--envvars</code> flag under <code>eb create</code>. eller med <code>eb setenv</code></span>
                     <aside class="notes">
-                        e.g. eb create --envvars BUCKET=test.data,LOGFILE=/var/logs/app.log
+                        <ul>
+                            <li>e.g. eb create --envvars BUCKET=test.data,LOGFILE=/var/logs/app.log</li>
+                            <li>e.g. eb setenv foo=bar</li>
+                            <li>Og vise med eb printenv</li>
+                        </ul>
+                        
                     </aside>
                 </section>
 
@@ -151,7 +156,13 @@
                     <span class="question">Q: Hvordan bruker jeg Beanstalk med utvikling-, -test og prodmiljøer?</span>
                     <span class="answer fragment">A: Med <code>eb clone</code> kan du klone miljøer, og med <code>eb use</code> kan du mappe én git branch mot ett miljø.</span>
                 </section>
-
+                <section>
+                    <h2>Spørsmål</h2>
+                    <span class="question">Q: Kan jeg knytte min applikasjon mot et spesifikt DNS-navn?</span>
+                    <span class="answer fragment">
+                        A: Ja, med <code>--cname</code> under <code>eb create</code>. Se <a href="http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/customdomains.html">aws docs</a>
+                    </span>
+                </section>
                 <section>
                     <h1>Flere spørsmål?</h1>
                 </section>
