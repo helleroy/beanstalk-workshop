@@ -127,7 +127,7 @@ Use ```eb config```, locate the following section in the configuration, and chan
     LowerThreshold: '2'
     MeasureName: RequestCount
     Period: '1'
-    Statistic: Average
+    Statistic: Sum
     Unit: Count
 ```
 
@@ -140,7 +140,7 @@ aws cloudwatch put-metric-alarm
     --alarm-name "<my-existing-AWSEBCloudwatchAlarmHigh-alarm>"
     --metric-name RequestCount
     --namespace AWS/ELB
-    --statistic Average
+    --statistic Sum
     --period 30
     --evaluation-periods 60
     --threshold 5
@@ -150,7 +150,7 @@ aws cloudwatch put-metric-alarm
     --alarm-name "<my-existing-AWSEBCloudwatchAlarmLow-alarm>"
     --metric-name RequestCount
     --namespace AWS/ELB
-    --statistic Average
+    --statistic Sum
     --period 30
     --evaluation-periods 60
     --threshold 2
