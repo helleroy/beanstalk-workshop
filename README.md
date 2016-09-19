@@ -33,7 +33,7 @@ cd beanstalk-workshop
 ### 1.1 Initialize
 - Using [init](http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/eb3-init.html), initialize beanstalk on this folder with java-8 as platform. Use the name of the ssh-key you created previously.
 ```
-eb init --region eu-central-1 --keyname beanstalkworkshop --platform java-8
+eb init beanstalk-workshop-<ditt navn> --region eu-central-1 --keyname beanstalkworkshop --platform java-8
 ```
 
 ### 1.2 Configure
