@@ -234,7 +234,7 @@ AWSEBCloudWatchLogs8832c8d3f1a54c238a40e36f31ef55a0ApplicationAccessLog:
   content : |
     [web-access_log]
     file = /var/log/web-1.log
-    log_group_name = `{ "Ref" : "AWSEBCloudWatchLogs8832c8d3f1a54c238a40e36f31ef55a0WebRequestLogGroup" }`
+    log_group_name = `{ "Ref" : "AWSEBCloudWatchLogs8832c8d3f1a54c238a40e36f31ef55a0ApplicationAccessLog" }`
     log_stream_name = {instance_id}
   mode  : "000400"
   owner : root
