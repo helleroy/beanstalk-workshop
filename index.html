@@ -107,9 +107,11 @@
                 <section>
                     <h2>Spørsmål</h2>
                     <span class="question">Q: Vil <code>eb deploy</code> gi nedetid?</span>
-                    <span class="answer fragment">A: Ja, den kan det. Kommandoen setter <strong>ikke</strong> opp en ny instans, flytter peker over til denne og tar den gamle ned. Istedenfor endrer <code>deploy</code> miljøet slik det står. Men den  deployer kun én instans av gangen, så det vil ikke merkes godt.</span>
+                    <span class="answer fragment">A: Nei, gitt at du har minst to instanser.
                     <aside class="notes">
-                        Resultat av dette er at er at man kan oppleve både ny og gammel versjon av nettstedet (med mindre man har sticky sessions)
+                        <p>Den melder ut fra lastbalanserer, oppdaterer og melder inn én instans av gangen (konfigurerbart).</p>
+
+                        <p>Resultat av dette er at er at man kan oppleve både ny og gammel versjon av nettstedet (med mindre man har sticky sessions)</p>
                     </aside>
                 </section>
 
@@ -148,13 +150,15 @@
                  <section>
                     <h2>Spørsmål</h2>
                     <span class="question">Q: Hvis jeg allerede har en app, kan jeg konvertere den til Beanstalk?</span>
-                    <span class="answer fragment">A: Kun hvis det er en AWS "Application". Da kan du gjøre det med <code>eb use MyAppName</code>. Ellers må du "konvertere" den manuelt, dvs. sette opp samme app fra scratch, og deretter ta ned gamle infrastrukturen.</span>
+                    <span class="answer fragment">A: Nei. Du må "konvertere" den manuelt, dvs. sette opp appen via BeanStalk, og deretter ta ned gamle infrastrukturen.</span>
                 </section>
 
                 <section>
                     <h2>Spørsmål</h2>
                     <span class="question">Q: Hvordan bruker jeg Beanstalk med utvikling-, -test og prodmiljøer?</span>
                     <span class="answer fragment">A: Med <code>eb clone</code> kan du klone miljøer, og med <code>eb use</code> kan du mappe én git branch mot ett miljø.</span>
+                    <aside class="notes">eb clone tar <a href="http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/using-features.managing.clone.html">IKKE med seg endringer gjort via AWS Console (Untatt Beanstalk)</a></aside>
+
                 </section>
                 <section>
                     <h2>Spørsmål</h2>
@@ -165,6 +169,12 @@
                 </section>
                 <section>
                     <h1>Flere spørsmål?</h1>
+                </section>
+                <section>
+                    <h1>Konklusjon</h1>
+                    <ul>
+                        <li>EB er SYKT FETT AZZ!</li>
+                    </ul>
                 </section>
             </div>
         </div>
