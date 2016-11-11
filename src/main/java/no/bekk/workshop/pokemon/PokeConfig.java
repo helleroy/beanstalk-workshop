@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 
 import java.io.File;
 
+import static com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES;
 import static com.fasterxml.jackson.databind.PropertyNamingStrategy.SNAKE_CASE;
 
 @Configuration
@@ -19,6 +20,7 @@ public class PokeConfig {
                 .setCache(new Cache(new File("cache"), 256000000L));
 
         ObjectMapper jsonMapper = new ObjectMapper()
+                .configure(FAIL_ON_UNKNOWN_PROPERTIES, false)
                 .setPropertyNamingStrategy(SNAKE_CASE);
 
         return new PokeService(okHttpClient, jsonMapper);

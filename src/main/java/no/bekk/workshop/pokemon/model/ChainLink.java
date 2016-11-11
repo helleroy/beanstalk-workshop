@@ -1,10 +1,7 @@
 package no.bekk.workshop.pokemon.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import java.util.List;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class ChainLink {
 
     private NamedAPIResource species;
