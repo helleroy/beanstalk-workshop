@@ -53,6 +53,7 @@ Voilà! Your app is running!
 
 - You can open it with ```eb open``` - it should respond with ```pong```. You can also go to ```/hostname``` to see which EC2 instance is responding. 
 - Refresh the page and watch it alternate between your two instances. You can also see the health status of your app with ```eb health```.
+- You can see all available endpoints by going to ```/mappings```
 
 ## Step 2. Change app and deploy
 
