@@ -90,6 +90,17 @@ public class PokeService {
                     } catch (IOException e) {
                         throw new RuntimeException("Failed to call api", e);
                     }
+                })
+                .thenApply(response -> {
+                    int code = response.code();
+                    switch (code) {
+                        case 200:
+                            return response;
+                        case 404:
+                            throw new RuntimeException("Could not find the requested pokemon");
+                        default:
+                            throw new RuntimeException("Got error from PokeAPI [" + code + "]");
+                    }
                 });
     }
 
