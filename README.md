@@ -51,7 +51,7 @@ You can look around the console to watch it in action. You can open the console 
 ### 1.3 See it
 Voilà! Your app is running! 
 
-- You can open it with ```eb open``` - it should respond with ```pong```. You can also go to ```/hostname``` to see which EC2 instance is responding. 
+- You can open it with ```eb open``` - it should respond with ```plong```. You can also go to ```/hostname``` to see which EC2 instance is responding. 
 - Refresh the page and watch it alternate between your two instances. You can also see the health status of your app with ```eb health```.
 - You can see all available endpoints by going to ```/mappings```
 
