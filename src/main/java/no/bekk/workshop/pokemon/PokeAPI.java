@@ -3,16 +3,14 @@ package no.bekk.workshop.pokemon;
 import no.bekk.workshop.pokemon.domain.Evolutions;
 import no.bekk.workshop.pokemon.domain.PokemonInfo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.List;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
+@CrossOrigin("*")
 @RestController
 @RequestMapping("/api/pokemon")
 public class PokeAPI {
