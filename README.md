@@ -55,37 +55,13 @@ Voilà! Your app is running!
 - Refresh the page and watch it alternate between your two instances. You can also see the health status of your app with ```eb health```.
 - You can see all available endpoints by going to ```/mappings```
 
-## Step 2. Change app and deploy
-
-**Procfile**
-The Procfile describes what Beanstalk should invoke to launch a Java app. You can use this in cases where you have multiple .jar files or need to configure the JVM in some way.
-Without a Procfile Beanstalk will by default invoke ```java -jar <your-app-name>.jar```.
-
-**Buildfile**
-The Buildfile describes how Beanstalk should build and package your code when deploying. Beanstalk's Java image comes with standard build tools to enable you to build on-server (Maven, Gradle etc.)
-More often than not you will probably be using a build server for this, but the option is there.
-
-### 2.1 Change the app text
-- Change the response text from the app at ```Endpoint.java```. For example, at the method ```ping```, replace ```"pong"``` with your own reply. 
-
-- Also, change the method ```error``` to log your name in System.err.println. (We'll print this to Slack at the end of the workshop).
-
-### 2.2 Deploy the changes
-- Commit the changes and, using [deploy](http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/eb3-deploy.html), deploy your changes to aws.
-```
-git commit -am "Change response text"
-eb deploy
-```
-
-During the deploy you will see that EB deploys to one instance at a time. If you refresh the webpage while it deploys you can observe both versions of your application.
-
-## Step 3. Configure auto scaling
+## Step 2. Configure auto scaling
 
 You will use ```eb config```for the following steps. This command will open the current environment configuration for your EB application in a text editor (Nano by default).
 It may not work properly on some machines; we've had trouble getting it to work on OS X when the home folder has whitespaces in it, for instance.
 Because of this there's a workaround where you can use the AWS CLI to do the same steps. 
 
-### 3.1 Set auto scaling minimum and maximum
+### 2.1 Set auto scaling minimum and maximum
 When you specified ```--scale 2``` in 1.2, you set both the minimum and maximum amount of instances the Load Balancer should spin up. 
 
 In order for the app to scale dynamically, you can use either of the following:
@@ -113,7 +89,7 @@ aws autoscaling update-auto-scaling-group
     --max-size 4
 ```
 
-### 3.2 Set metrics to trigger alarm
+### 2.2 Set metrics to trigger alarm
 The alarms that will scale your application are based on network traffic by default. You can see your current alarms in the CloudWatch part of the AWS Console.
 Change these to instead be based on the number of requests by using either of the following:
 
@@ -158,7 +134,7 @@ aws cloudwatch put-metric-alarm
     --comparison-operator LessThanThreshold
 ```
 
-### 3.3 See the app auto-scale
+### 2.3 See the app auto-scale
 Send several requests to your webapp to get over the threshold you've created for scaling up. 
 
 - You can use the command below will request your website once every 5 second, and write the IP of the EC2 instance responding.
@@ -169,6 +145,30 @@ while sleep 5; do curl <dns-name-for-my-load-balancer>/hostname; done;
 *(Note: Your DNS name can be found with ```eb open```)*
 
 After a couple of minutes, a new instance will be spun up, and respond with a new IP for your requests.
+
+## Step 3. Change app and deploy
+
+**Procfile**
+The Procfile describes what Beanstalk should invoke to launch a Java app. You can use this in cases where you have multiple .jar files or need to configure the JVM in some way.
+Without a Procfile Beanstalk will by default invoke ```java -jar <your-app-name>.jar```.
+
+**Buildfile**
+The Buildfile describes how Beanstalk should build and package your code when deploying. Beanstalk's Java image comes with standard build tools to enable you to build on-server (Maven, Gradle etc.)
+More often than not you will probably be using a build server for this, but the option is there.
+
+### 3.1 Change the app text
+- Change the response text from the app at ```Endpoint.java```. For example, at the method ```ping```, replace ```"pong"``` with your own reply. 
+
+- Also, change the method ```error``` to log your name in System.err.println. (We'll print this to Slack at the end of the workshop).
+
+### 3.2 Deploy the changes
+- Commit the changes and, using [deploy](http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/eb3-deploy.html), deploy your changes to aws.
+```
+git commit -am "Change response text"
+eb deploy
+```
+
+During the deploy you will see that EB deploys to one instance at a time. If you refresh the webpage while it deploys you can observe both versions of your application.
 
 ## Step 4. Log output
 EB will store a few logs by default. You can download them all using
