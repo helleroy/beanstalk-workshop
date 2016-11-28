@@ -7,10 +7,7 @@ import com.squareup.okhttp.Response;
 import com.squareup.okhttp.ResponseBody;
 import no.bekk.workshop.pokemon.domain.Evolutions;
 import no.bekk.workshop.pokemon.domain.PokemonInfo;
-import no.bekk.workshop.pokemon.model.ChainLink;
-import no.bekk.workshop.pokemon.model.EvolutionChain;
-import no.bekk.workshop.pokemon.model.Pokemon;
-import no.bekk.workshop.pokemon.model.PokemonSpecies;
+import no.bekk.workshop.pokemon.model.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,6 +18,7 @@ import static java.util.stream.Collectors.toList;
 
 public class PokeService {
 
+    private static final String POKEMON_ALL_URL = "http://pokeapi.co/api/v2/pokemon/";
     private static final String POKEMON_URL = "http://pokeapi.co/api/v2/pokemon/%s/";
     private static final String POKEMON_SPECIES_URL = "http://pokeapi.co/api/v2/pokemon-species/%s/";
 
@@ -30,6 +28,21 @@ public class PokeService {
     public PokeService(OkHttpClient okHttpClient, ObjectMapper jsonMapper) {
         this.okHttpClient = okHttpClient;
         this.jsonMapper = jsonMapper;
+    }
+
+    public List<PokemonInfo> allPokemon(int offset) {
+        return callApi(POKEMON_ALL_URL + "?offset=" + offset)
+                .thenApply(response -> toType(response, NamedAPIResourceList.class))
+                .thenApply(NamedAPIResourceList::getResults)
+                .thenApply(results -> results
+                        .parallelStream()
+                        .map(NamedAPIResource::getUrl)
+                        .map(url -> callApi(url)
+                                .thenApply(response -> toType(response, Pokemon.class))
+                                .join())
+                        .map(PokemonInfo::fromModel)
+                        .collect(toList()))
+                .join();
     }
 
     public Evolutions pokemonEvolutions(String name) {

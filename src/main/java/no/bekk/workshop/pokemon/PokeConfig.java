@@ -2,6 +2,7 @@ package no.bekk.workshop.pokemon;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.squareup.okhttp.Cache;
+import com.squareup.okhttp.ConnectionPool;
 import com.squareup.okhttp.OkHttpClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,6 +18,7 @@ public class PokeConfig {
     @Bean
     public PokeService pokeService() {
         OkHttpClient okHttpClient = new OkHttpClient()
+                .setConnectionPool(new ConnectionPool(20, 300000L))
                 .setCache(new Cache(new File("cache"), 256000000L));
 
         ObjectMapper jsonMapper = new ObjectMapper()
