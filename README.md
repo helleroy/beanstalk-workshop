@@ -39,7 +39,7 @@ eb init beanstalk-workshop-<ditt navn> --region eu-central-1 --keyname beanstalk
 ### 1.2 Configure
 - Using [create](http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/eb3-create.html), configure the Beanstalk application to use 2 x t2.micro EC2 instances with a Load Balancer in front. Remember to specify the ssh-key you created previously so you can ssh into our instances.
 ```
-eb create BeanstalkWorkshopApp --region eu-central-1 --instance_type t2.micro --keyname beanstalkworkshop --platform java-8 --scale 2
+eb create BeanstalkWorkshopApp --region eu-central-1 --instance_type t2.micro --keyname beanstalkworkshop --platform java-8 --scale 1
 ```
 
 This will take ~5 minutes. AWS will create loadbalancer, EC2-instances, CloudWatch alarms, security groups and S3 bucket for the environment data. 
@@ -62,7 +62,7 @@ It may not work properly on some machines; we've had trouble getting it to work 
 Because of this there's a workaround where you can use the AWS CLI to do the same steps. 
 
 ### 2.1 Set auto scaling minimum and maximum
-When you specified ```--scale 2``` in 1.2, you set both the minimum and maximum amount of instances the Load Balancer should spin up. 
+When you specified ```--scale 1``` in 1.2, you set both the minimum and maximum amount of instances the Load Balancer should spin up. 
 
 In order for the app to scale dynamically, you can use either of the following:
 
@@ -73,8 +73,8 @@ aws:autoscaling:asg:
     Availability Zones: Any
     Cooldown: '360'
     Custom Availability Zones: ''
-    MaxSize: '4'
-    MinSize: '2'
+    MaxSize: '2'
+    MinSize: '1'
 ```
 
 Then save and close the file. EB will automatically deploy the new environment configuration.
@@ -85,8 +85,8 @@ Then save and close the file. EB will automatically deploy the new environment c
 aws autoscaling update-auto-scaling-group
     --region eu-central-1
     --auto-scaling-group-name "<my-auto-scaling-group>"
-    --min-size 2
-    --max-size 4
+    --min-size 1
+    --max-size 2
 ```
 
 ### 2.2 Set metrics to trigger alarm
