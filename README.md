@@ -333,7 +333,7 @@ On the next screen we'll replace the code so it logs to Slack instead of Loggly.
 - Under ```Lambda function handler and role```, you can leave all the options as default. Just remember to name your role
 - Click Next
 
-Voilà! You're done! Your error logs should now appear in our Slack channel on the projector :)  (not in Bekk-slack)
+Voilà! You're done! Your error logs should now appear in our Slack channel :)
 
 ## Step 6. Destroy your app
 Clean up after yourself, destroying everything related to this app with
