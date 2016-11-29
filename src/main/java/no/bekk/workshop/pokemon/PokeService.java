@@ -1,19 +1,17 @@
 package no.bekk.workshop.pokemon;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
-import com.squareup.okhttp.ResponseBody;
 import no.bekk.workshop.pokemon.domain.Evolutions;
 import no.bekk.workshop.pokemon.domain.PokemonInfo;
 import no.bekk.workshop.pokemon.model.*;
+import okhttp3.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static java.util.stream.Collectors.toList;
 
 public class PokeService {
@@ -96,6 +94,9 @@ public class PokeService {
                     try {
                         return okHttpClient.newCall(
                                 new Request.Builder()
+                                        .cacheControl(new CacheControl.Builder()
+                                                .maxStale(Integer.MAX_VALUE, SECONDS)
+                                                .build())
                                         .get()
                                         .url(url)
                                         .build())
