@@ -91,14 +91,15 @@ By default, your bucket is not publicly accessable. In our case, we want everyon
 }
 ```
 
-## Step 1.4 Upload the react app
-Build and upload the app
+### Step 1.4 Upload the react app
+Build and upload the app 
 ```
 npm run build
 aws s3 sync ./dist/. s3://YOUR-BUCKET-NAME --region=$AWS_DEFAULT_REGION
 ```
 
-## Step 1.5 See it
+
+### Step 1.5 See it
 Open http://YOUR-BUCKET-NAME.s3.amazonaws.com/index.html. It should greet you with pokemonrelated stuff! :)
 
 ## Step 2. Configure auto scaling
