@@ -24,7 +24,8 @@ ssh-keygen -f ~/.ssh/beanstalkworkshop
 ```
 - Clone and enter this repo
 ```
-git clone git@github.com:helleroy/beanstalk-workshop.git
+git clone git@github.com:helleroy/beanstalk-workshop.git  # using ssh 
+git clone https://github.com/helleroy/beanstalk-workshop.git  # alternative to the above
 cd beanstalk-workshop
 ```
 
@@ -63,7 +64,8 @@ For fun and completeness, we'll use a React-redux application which uses this ba
 ### Step 1.1 Clone the repo and change api url
 - Clone the pokemon frontend
 ```
-git clone git@github.com:tomfa/beanstalk-frontend.git
+git clone git@github.com:tomfa/beanstalk-frontend.git  # using ssh 
+git clone https://github.com/tomfa/beanstalk-frontend.git  # alternative to the above
 npm install
 ```
 
