@@ -66,6 +66,7 @@ For fun and completeness, we'll use a React-redux application which uses this ba
 ```
 git clone git@github.com:tomfa/beanstalk-frontend.git  # using ssh 
 git clone https://github.com/tomfa/beanstalk-frontend.git  # alternative to the above
+cd beanstalk-frontend
 npm install
 ```
 
