@@ -28,15 +28,15 @@ git clone git@github.com:helleroy/beanstalk-workshop.git
 cd beanstalk-workshop
 ```
 
-## Step 1. Set up Beanstalk
+## Step 0. Set up Beanstalk
 
-### 1.1 Initialize
+### 0.1 Initialize
 - Using [init](http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/eb3-init.html), initialize beanstalk on this folder with java-8 as platform. Use the name of the ssh-key you created previously.
 ```
 eb init beanstalk-workshop-<ditt navn> --region eu-central-1 --keyname beanstalkworkshop --platform java-8
 ```
 
-### 1.2 Configure
+### 0.2 Configure
 - Using [create](http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/eb3-create.html), configure the Beanstalk application to use 2 x t2.micro EC2 instances with a Load Balancer in front. Remember to specify the ssh-key you created previously so you can ssh into our instances.
 ```
 eb create BeanstalkWorkshopApp --region eu-central-1 --instance_type t2.micro --keyname beanstalkworkshop --platform java-8 --scale 1
@@ -46,14 +46,60 @@ This will take ~5 minutes. AWS will create loadbalancer, EC2-instances, CloudWat
 
 You can look around the console to watch it in action. You can open the console using ```eb console```
 
-*(Note: If the command above fails due to missing default vpc or missing default subnet, this means you have been playing around too much in AWS. You can then go back to Step 1.1, and do the workshop with another region. Alternatively, see [create](http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/eb3-create.html) on how to specify a vpc, subnet etc.)*
+*(Note: If the command above fails due to missing default vpc or missing default subnet, this means you have been playing around too much in AWS. You can then go back to Step 0.1, and do the workshop with another region. Alternatively, see [create](http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/eb3-create.html) on how to specify a vpc, subnet etc.)*
 
-### 1.3 See it
+### 0.3 See it
 Voilà! Your app is running! 
 
 - You can open it with ```eb open``` - it should respond with ```plong```. You can also go to ```/hostname``` to see which EC2 instance is responding. 
 - Refresh the page and watch it alternate between your two instances. You can also see the health status of your app with ```eb health```.
 - You can see all available endpoints by going to ```/mappings```
+
+
+## Step 1. Add a frontend
+
+For fun and completeness, we'll use a React-redux application which uses this backend. 
+
+### Step 1.1 Clone the repo and change api url
+- Clone the pokemon frontend
+```
+git clone git@github.com:tomfa/beanstalk-frontend.git
+npm install
+```
+
+- Change ```localhost:5000``` with the url of your backend in the file ```src/api/PokemonSearch.js```
+
+### Step 1.2 Create a bucket on AWS
+
+**In the [AWS Console](https://console.aws.amazon.com/console/home), go to [S3](https://console.aws.amazon.com/s3/home), and create a bucket in Frankfurt.**
+Choose a bucket name, and select region Frankfurt. You can call it what ever you wish, but it must (actually) be globally unique. I'll call mine *YOUR-BUCKET-NAME*. 
+
+### Step 1.3 Make that bucket publically available
+By default, your bucket is not publicly accessable. In our case, we want everyone to be able to read from the bucket, but not write. We can do this under *AWS Console > S3 > YOUR-BUCKET-NAME > Properties > Permissions*. Allow *Everyone* to *List*, and set the following as bucket policy:
+```
+{
+	"Version": "2012-10-17",
+	"Statement": [
+		{
+			"Sid": "PublicReadForGetBucketObjects",
+			"Effect": "Allow",
+			"Principal": "*",
+			"Action": "s3:GetObject",
+			"Resource": "arn:aws:s3:::YOUR-BUCKET-NAME/*"
+		}
+	]
+}
+```
+
+## Step 1.4 Upload the react app
+Build and upload the app
+```
+npm run build
+aws s3 sync ./dist/. s3://YOUR-BUCKET-NAME --region=$AWS_DEFAULT_REGION
+```
+
+## Step 1.5 See it
+Open http://YOUR-BUCKET-NAME.s3.amazonaws.com/index.html. It should greet you with pokemonrelated stuff! :)
 
 ## Step 2. Configure auto scaling
 
@@ -95,6 +141,7 @@ Change these to instead be based on the number of requests by using either of th
 
 - EB CLI:
 Use ```eb config```, locate the following section in the configuration, and change it like so:
+
 ```
   AWSEBCloudwatchAlarmHigh.aws:autoscaling:trigger:
     UpperThreshold: '5'
@@ -112,6 +159,7 @@ Then save and close the file. EB will automatically deploy the new environment c
 
 - AWS CLI:
 **If ```eb config``` didn't work**, invoke the following using ```aws```
+
 ```
 aws cloudwatch put-metric-alarm
     --alarm-name "<my-existing-AWSEBCloudwatchAlarmHigh-alarm>"
