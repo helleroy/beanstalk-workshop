@@ -341,7 +341,7 @@ Voilà! You're done! Your error logs should now appear in our Slack channel :)
 ## Step 6. Destroy your app
 Clean up after yourself, destroying everything related to this app with
 ```
-eb terminate -–all
+eb terminate --all
 ```
 
 ## Further excersises
