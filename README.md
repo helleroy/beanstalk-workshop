@@ -328,7 +328,7 @@ On the next screen we'll replace the code so it logs to Slack instead of Loggly.
 
 - Name your Lambda function and select Runtime ```Node.js 4.3```.
 - Under Lambda function code, select Code Entry type ```Edit code inline```, and replace the code with the code from [this Github Gist](https://gist.github.com/tomfa/f4e090cbaff0189eba17c0fc301c63db#file-cwlogsslack-js).
-- At the top of the inserted code, set ```UNENCRYPTED_URL``` to ```'/services/T0FHGDP0T/B2BEAUMGQ/BXwRUZ1ZuW8hz61cWtkrclpN'```. *(This is the [Incoming webhook](https://api.slack.com/incoming-webhooks) of a Slack channel we've set up for this workshop)*
+- At the top of the inserted code, set ```UNENCRYPTED_URL``` to ```'/services/T028UJTLQ/B37H2QT9P/cHJts3wTldTZv4v5klPbUWPj'```. *(This is the [Incoming webhook](https://api.slack.com/incoming-webhooks) of a Slack channel we've set up for this workshop)*
 - At the top of the inserted code, set ```CHANNEL``` to ```'#beanstalk-workshop'```
 - Under ```Lambda function handler and role```, you can leave all the options as default. Just remember to name your role
 - Click Next
